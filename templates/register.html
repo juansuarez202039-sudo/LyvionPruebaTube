@@ -1,0 +1,22 @@
+<!-- templates/register.html - Página de registro decorada -->
+{% extends "base.html" %}
+{% block content %}
+<div class="max-w-md mx-auto card hover-float">
+    <h2 class="text-3xl font-bold text-center mb-6 text-primary animate-bounce-in"><i class="fas fa-user-plus mr-2 icon-spin"></i>Registro</h2>
+    <form method="POST">
+        <div class="mb-4">
+            <label class="block text-gray-700 font-semibold"><i class="fas fa-user mr-2"></i>Nombre de Usuario</label>
+            <input type="text" name="username" required class="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-sky-300 transition duration-500 hover:scale-105">
+        </div>
+        <div class="mb-4">
+            <label class="block text-gray-700 font-semibold"><i class="fas fa-lock mr-2"></i>Contraseña</label>
+            <input type="password" name="password" required class="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-sky-300 transition duration-500 hover:scale-105">
+        </div>
+        <div class="mb-6">
+            <label class="block text-gray-700 font-semibold"><i class="fas fa-tag mr-2"></i>Sobrenombre (opcional)</label>
+            <input type="text" name="nickname" class="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-sky-300 transition duration-500 hover:scale-105">
+        </div>
+        <button type="submit" class="btn-primary w-full"><i class="fas fa-paper-plane mr-2"></i>Registrarse</button>
+    </form>
+</div>
+{% endblock %}

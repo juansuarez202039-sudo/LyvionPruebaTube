@@ -1,0 +1,116 @@
+<!-- templates/base.html - Plantilla base decorada con Tailwind CSS, íconos y estilos modernos -->
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LyvionTube - Tu Plataforma de Videos</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        body { 
+            background: linear-gradient(135deg, #e0f7fa 0%, #f1f8e9 100%); 
+            font-family: 'Poppins', sans-serif; 
+            animation: bodyFade 1.5s ease-in-out; 
+        }
+        @keyframes bodyFade { from { opacity: 0; transform: scale(0.95); } to { opacity: 1; transform: scale(1); } }
+        .btn-primary { 
+            @apply bg-sky-500 hover:bg-sky-600 text-white font-bold py-2 px-4 rounded-lg shadow-lg transition-all duration-500 transform hover:scale-110 hover:rotate-1; 
+            animation: btnGlow 2s infinite alternate; 
+        }
+        @keyframes btnGlow { from { box-shadow: 0 0 10px #87ceeb; } to { box-shadow: 0 0 20px #87ceeb; } }
+        .card { 
+            @apply bg-white rounded-2xl shadow-xl p-6 hover:shadow-2xl transition-all duration-700 transform hover:-translate-y-3 hover:rotate-1 border-2 border-mint-200; 
+            animation: cardBounce 0.8s ease-out; 
+            background: linear-gradient(145deg, #ffffff 0%, #f0f9ff 100%); 
+        }
+        @keyframes cardBounce { 0% { transform: translateY(50px) scale(0.9); opacity: 0; } 50% { transform: translateY(-10px) scale(1.05); } 70% { transform: translateY(5px) scale(0.98); } 100% { transform: translateY(0) scale(1); opacity: 1; } }
+        .video-player { 
+            @apply rounded-xl shadow-lg border-2 border-sky-200 transition-all duration-500 hover:shadow-2xl hover:scale-105; 
+            animation: videoPulse 3s infinite; 
+        }
+        @keyframes videoPulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.02); } }
+        .header-bg { 
+            background: linear-gradient(135deg, #87ceeb 0%, #98fb98 100%); 
+            animation: headerWave 1s ease-out; 
+        }
+        @keyframes headerWave { from { transform: translateX(-100%) rotate(-5deg); } to { transform: translateX(0) rotate(0); } }
+        .text-primary { color: #87ceeb; animation: textShimmer 2s infinite; }
+        @keyframes textShimmer { 0%, 100% { text-shadow: 0 0 5px #87ceeb; } 50% { text-shadow: 0 0 15px #87ceeb; } }
+        .text-secondary { color: #98fb98; }
+        .animate-bounce-in { animation: bounceIn 0.6s ease-out; }
+        @keyframes bounceIn { 0% { transform: scale(0.3); opacity: 0; } 50% { transform: scale(1.05); } 70% { transform: scale(0.9); } 100% { transform: scale(1); opacity: 1; } }
+        .hover-float { transition: all 0.5s ease; }
+        .hover-float:hover { transform: translateY(-10px) rotate(2deg); box-shadow: 0 10px 30px rgba(135, 206, 235, 0.3); }
+        .icon-spin { animation: spin 1s linear infinite; }
+        @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+        .fade-in-up { animation: fadeInUp 0.8s ease-out; }
+        @keyframes fadeInUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
+    </style>
+</head>
+<body class="min-h-screen">
+    <header class="header-bg text-white shadow-lg">
+        <div class="container mx-auto px-4 py-4 flex justify-between items-center">
+            <div class="flex items-center space-x-2">
+                <i class="fas fa-play-circle text-3xl text-secondary icon-spin"></i>
+                <a href="{{ url_for('home') }}" class="text-3xl font-bold hover:text-sky-200 transition duration-500 hover-float">LyvionTube</a>
+            </div>
+            <nav class="flex space-x-6 items-center">
+                <form method="GET" action="{{ url_for('search') }}" class="flex items-center space-x-2">
+                    <input type="text" name="q" placeholder="Buscar videos o canales..." required class="p-2 rounded-lg text-black focus:outline-none focus:ring-2 focus:ring-sky-300 transition duration-500 animate-bounce-in">
+                    <button type="submit" class="btn-primary"><i class="fas fa-search"></i></button>
+                </form>
+                <a href="{{ url_for('plans') }}" class="hover:text-sky-200 transition duration-500 flex items-center space-x-1 hover-float">
+                    <i class="fas fa-crown icon-spin"></i><span>Planes</span>
+                </a>
+                {% if session.user_id %}
+                    <a href="{{ url_for('upload') }}" class="btn-primary"><i class="fas fa-upload mr-2"></i>Subir Video</a>
+                    <div class="relative">
+                        <button onclick="toggleDropdown()" class="flex items-center space-x-2 hover:text-sky-200 transition duration-500 hover-float">
+                            <img src="{{ url_for('uploaded_file', filename=current_user.profile_pic) }}" alt="Foto de perfil" class="w-8 h-8 rounded-full border-2 border-white transition duration-500 hover:scale-110">
+                            <span>{{ current_user.nickname }}</span>
+                            <i class="fas fa-chevron-down"></i>
+                        </button>
+                        <div id="dropdown" class="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg hidden fade-in-up">
+                            <a href="{{ url_for('profile') }}" class="block px-4 py-2 text-gray-800 hover:bg-sky-50 transition duration-500"><i class="fas fa-user mr-2"></i>Perfil</a>
+                            {% if current_user.username == 'LyvionStudio' %}
+                                <a href="{{ url_for('admin') }}" class="block px-4 py-2 text-gray-800 hover:bg-sky-50 transition duration-500"><i class="fas fa-cogs mr-2"></i>Admin</a>
+                                <a href="{{ url_for('manage_users') }}" class="block px-4 py-2 text-gray-800 hover:bg-sky-50 transition duration-500"><i class="fas fa-users-cog mr-2"></i>Gestionar Usuarios</a>
+                                <a href="{{ url_for('create_channel') }}" class="block px-4 py-2 text-gray-800 hover:bg-sky-50 transition duration-500"><i class="fas fa-plus mr-2"></i>Crear Canal</a>
+                            {% endif %}
+                            <a href="{{ url_for('logout') }}" class="block px-4 py-2 text-gray-800 hover:bg-sky-50 transition duration-500"><i class="fas fa-sign-out-alt mr-2"></i>Logout</a>
+                        </div>
+                    </div>
+                {% else %}
+                    <a href="{{ url_for('login') }}" class="btn-primary">Login</a>
+                    <a href="{{ url_for('register') }}" class="btn-primary">Registro</a>
+                {% endif %}
+            </nav>
+        </div>
+    </header>
+    <main class="container mx-auto px-4 py-8">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="mb-4 p-4 rounded-lg shadow-md {{ 'bg-green-100 text-green-800 border-l-4 border-green-500' if category == 'success' else 'bg-red-100 text-red-800 border-l-4 border-red-500' }} fade-in-up">
+                        <i class="fas {{ 'fa-check-circle' if category == 'success' else 'fa-exclamation-triangle' }} mr-2"></i>{{ message }}
+                    </div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+        {% block content %}{% endblock %}
+    </main>
+    <footer class="bg-gray-800 text-white py-6 mt-12">
+        <div class="container mx-auto text-center">
+            <p>&copy; 2026 LyvionTube. Todos los derechos reservados. <i class="fas fa-heart text-sky-400 icon-spin"></i></p>
+        </div>
+    </footer>
+    <script>
+        function toggleDropdown() {
+            const dropdown = document.getElementById('dropdown');
+            dropdown.classList.toggle('hidden');
+        }
+    </script>
+</body>
+</html>

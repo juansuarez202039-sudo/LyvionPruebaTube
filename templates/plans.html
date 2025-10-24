@@ -1,0 +1,60 @@
+<!-- templates/plans.html - Página de planes decorada -->
+{% extends "base.html" %}
+{% block content %}
+<div class="text-center mb-8 fade-in-up">
+    <h2 class="text-4xl font-bold text-primary mb-4 animate-bounce-in">Planes de Suscripción</h2>
+    <p class="text-lg text-gray-600">Elige el plan que mejor se adapte a ti.</p>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+    <div class="card text-center hover-float">
+        <h3 class="text-2xl font-bold text-gray-800 mb-4">Gratis</h3>
+        <p class="text-gray-600 mb-4">Acceso básico con anuncios.</p>
+        <p class="text-3xl font-bold text-primary mb-4">$0</p>
+        <ul class="text-left mb-6">
+            <li><i class="fas fa-check text-green-500 mr-2 icon-spin"></i>Subir videos limitados</li>
+            <li><i class="fas fa-check text-green-500 mr-2 icon-spin"></i>Acceso a videos públicos</li>
+            <li><i class="fas fa-times text-red-500 mr-2"></i>Anuncios</li>
+        </ul>
+        <button class="btn-primary w-full" disabled>Plan Actual</button>
+    </div>
+    <div class="card text-center hover-float">
+        <h3 class="text-2xl font-bold text-gray-800 mb-4">Básico</h3>
+        <p class="text-gray-600 mb-4">Sin anuncios por 1 mes.</p>
+        <p class="text-3xl font-bold text-primary mb-4">$4.99/mes</p>
+        <ul class="text-left mb-6">
+            <li><i class="fas fa-check text-green-500 mr-2 icon-spin"></i>Subir videos ilimitados</li>
+            <li><i class="fas fa-check text-green-500 mr-2 icon-spin"></i>Acceso a videos premium</li>
+            <li><i class="fas fa-check text-green-500 mr-2 icon-spin"></i>Sin anuncios</li>
+        </ul>
+        <form method="POST">
+            <button name="plan" value="Básico" class="btn-primary w-full">Seleccionar</button>
+        </form>
+    </div>
+    <div class="card text-center hover-float">
+        <h3 class="text-2xl font-bold text-gray-800 mb-4">Pro</h3>
+        <p class="text-gray-600 mb-4">Funciones avanzadas permanentes.</p>
+        <p class="text-3xl font-bold text-primary mb-4">$9.99/mes</p>
+        <ul class="text-left mb-6">
+            <li><i class="fas fa-check text-green-500 mr-2 icon-spin"></i>Todo lo de Básico</li>
+            <li><i class="fas fa-check text-green-500 mr-2 icon-spin"></i>Personalización avanzada</li>
+            <li><i class="fas fa-check text-green-500 mr-2 icon-spin"></i>Soporte prioritario</li>
+        </ul>
+        <form method="POST">
+            <button name="plan" value="Pro" class="btn-primary w-full">Seleccionar</button>
+        </form>
+    </div>
+    <div class="card text-center hover-float">
+        <h3 class="text-2xl font-bold text-gray-800 mb-4">VIP</h3>
+        <p class="text-gray-600 mb-4">Acceso completo y soporte VIP.</p>
+        <p class="text-3xl font-bold text-primary mb-4">$19.99/mes</p>
+        <ul class="text-left mb-6">
+            <li><i class="fas fa-check text-green-500 mr-2 icon-spin"></i>Todo lo de Pro</li>
+            <li><i class="fas fa-check text-green-500 mr-2 icon-spin"></i>Acceso temprano a funciones</li>
+            <li><i class="fas fa-check text-green-500 mr-2 icon-spin"></i>Soporte VIP 24/7</li>
+        </ul>
+        <form method="POST">
+            <button name="plan" value="VIP" class="btn-primary w-full">Seleccionar</button>
+        </form>
+    </div>
+</div>
+{% endblock %}

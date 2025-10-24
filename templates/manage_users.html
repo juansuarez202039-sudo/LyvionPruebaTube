@@ -1,0 +1,43 @@
+<!-- templates/manage_users.html - Página de gestión de usuarios decorada -->
+{% extends "base.html" %}
+{% block content %}
+<div class="text-center mb-8 fade-in-up">
+    <h2 class="text-4xl font-bold text-primary mb-4 animate-bounce-in">Gestionar Usuarios</h2>
+    <p class="text-lg text-gray-600">Busca y administra usuarios.</p>
+</div>
+<form method="GET" class="mb-8">
+    <input type="text" name="q" placeholder="Buscar usuario..." value="{{ query }}" class="p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-sky-300 transition duration-500 hover:scale-105 mr-2">
+    <button type="submit" class="btn-primary">Buscar</button>
+</form>
+<table class="w-full table-auto mb-8">
+    <thead>
+        <tr class="bg-sky-100">
+            <th class="px-4 py-2">ID</th>
+            <th class="px-4 py-2">Usuario</th>
+            <th class="px-4 py-2">Plan</th>
+            <th class="px-4 py-2">Seguidores Totales</th>
+            <th class="px-4 py-2">Acciones</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for user in users %}
+        <tr class="bg-white hover:bg-sky-50 transition duration-300">
+            <td class="border px-4 py-2">{{ user.id }}</td>
+            <td class="border px-4 py-2">{{ user.username }}</td>
+            <td class="border px-4 py-2">{{ user.plan }}</td>
+            <td class="border px-4 py-2">{{ format_followers(user.total_followers) }}</td>
+            <td class="border px-4 py-2">
+                <form method="POST" class="inline">
+                    <input type="number" name="amount" placeholder="Cantidad" required class="p-1 border border-gray-300 rounded mr-2">
+                    <button name="action" value="add_followers" class="btn-primary mr-2"><i class="fas fa-plus mr-2"></i>Agregar Seguidores</button>
+                    <button name="action" value="remove_followers" class="btn-primary mr-2"><i class="fas fa-minus mr-2"></i>Remover Seguidores</button>
+                    <button name="action" value="assign_moderator" class="btn-primary mr-2"><i class="fas fa-user-shield mr-2"></i>Asignar Moderador</button>
+                    <button name="action" value="remove_moderator" class="btn-primary"><i class="fas fa-user-times mr-2"></i>Remover Moderador</button>
+                    <input type="hidden" name="user_id" value="{{ user.id }}">
+                </form>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}

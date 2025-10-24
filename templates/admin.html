@@ -1,0 +1,101 @@
+<!-- templates/admin.html - Página de administración decorada -->
+{% extends "base.html" %}
+{% block content %}
+<div class="text-center mb-8 fade-in-up">
+    <h2 class="text-4xl font-bold text-primary mb-4 animate-bounce-in">Panel de Administración</h2>
+    <p class="text-lg text-gray-600">Gestiona usuarios, canales y comentarios.</p>
+</div>
+<h3 class="text-2xl font-bold mb-4"><i class="fas fa-users mr-2 icon-spin"></i>Usuarios</h3>
+<table class="w-full table-auto mb-8">
+    <thead>
+        <tr class="bg-sky-100">
+            <th class="px-4 py-2">ID</th>
+            <th class="px-4 py-2">Usuario</th>
+            <th class="px-4 py-2">Plan</th>
+            <th class="px-4 py-2">Acciones</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for user in users %}
+        <tr class="bg-white hover:bg-sky-50 transition duration-300">
+            <td class="border px-4 py-2">{{ user.id }}</td>
+            <td class="border px-4 py-2">{{ user.username }}</td>
+            <td class="border px-4 py-2">{{ user.plan }}</td>
+            <td class="border px-4 py-2">
+                <form method="POST" class="inline">
+                    <button name="action" value="delete_user" class="btn-primary mr-2"><i class="fas fa-trash mr-2"></i>Eliminar</button>
+                    <input type="hidden" name="user_id" value="{{ user.id }}">
+                </form>
+                <form method="POST" class="inline">
+                    <button name="action" value="assign_moderator" class="btn-primary"><i class="fas fa-user-shield mr-2"></i>Asignar Moderador</button>
+                    <input type="hidden" name="user_id" value="{{ user.id }}">
+                </form>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+<h3 class="text-2xl font-bold mb-4"><i class="fas fa-tv mr-2 icon-spin"></i>Canales</h3>
+<table class="w-full table-auto mb-8">
+    <thead>
+        <tr class="bg-sky-100">
+            <th class="px-4 py-2">ID</th>
+            <th class="px-4 py-2">Nombre</th>
+            <th class="px-4 py-2">Seguidores</th>
+            <th class="px-4 py-2">Acciones</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for channel in channels %}
+        <tr class="bg-white hover:bg-sky-50 transition duration-300">
+            <td class="border px-4 py-2">{{ channel.id }}</td>
+            <td class="border px-4 py-2">{{ channel.name }}</td>
+            <td class="border px-4 py-2">{{ format_followers(channel.followers) }}</td>
+            <td class="border px-4 py-2">
+                <form method="POST" class="inline">
+                    <input type="number" name="amount" placeholder="Cantidad" required class="p-1 border border-gray-300 rounded mr-2">
+                    <button name="action" value="add_followers_channel" class="btn-primary mr-2"><i class="fas fa-plus mr-2"></i>Agregar Seguidores</button>
+                    <input type="hidden" name="channel_id" value="{{ channel.id }}">
+                </form>
+                <form method="POST" class="inline">
+                    <button name="action" value="delete_channel" class="btn-primary"><i class="fas fa-trash mr-2"></i>Eliminar Canal</button>
+                    <input type="hidden" name="channel_id" value="{{ channel.id }}">
+                </form>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+<h3 class="text-2xl font-bold mb-4"><i class="fas fa-video mr-2 icon-spin"></i>Videos</h3>
+<table class="w-full table-auto">
+    <thead>
+        <tr class="bg-sky-100">
+            <th class="px-4 py-2">ID</th>
+            <th class="px-4 py-2">Título</th>
+            <th class="px-4 py-2">Fecha de Subida</th>
+            <th class="px-4 py-2">Canal</th>
+            <th class="px-4 py-2">Likes</th>
+            <th class="px-4 py-2">Dislikes</th>
+            <th class="px-4 py-2">Acciones</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for video in videos %}
+        <tr class="bg-white hover:bg-sky-50 transition duration-300">
+            <td class="border px-4 py-2">{{ video.id }}</td>
+            <td class="border px-4 py-2">{{ video.title }}</td>
+            <td class="border px-4 py-2">{{ video.upload_date.strftime('%Y-%m-%d %H:%M') }}</td>
+            <td class="border px-4 py-2">{{ video.channel.name }}</td>
+            <td class="border px-4 py-2">{{ video.likes }}</td>
+            <td class="border px-4 py-2">{{ video.dislikes }}</td>
+            <td class="border px-4 py-2">
+                <form method="POST" class="inline">
+                    <button name="action" value="delete_video" class="btn-primary"><i class="fas fa-trash mr-2"></i>Eliminar</button>
+                    <input type="hidden" name="video_id" value="{{ video.id }}">
+                </form>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}

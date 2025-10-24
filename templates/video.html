@@ -1,0 +1,119 @@
+<!-- templates/video.html - Página de video decorada con AJAX -->
+{% extends "base.html" %}
+{% block content %}
+<div class="max-w-4xl mx-auto card hover-float">
+    <h2 class="text-3xl font-bold mb-4 text-primary animate-bounce-in"><i class="fas fa-video mr-2 icon-spin"></i>{{ video.title }}</h2>
+    <div class="relative">
+        <video class="video-player w-full h-96 object-cover mb-4" controls id="video-player">
+            <source src="{{ url_for('uploaded_file', filename=video.filename) }}" type="video/mp4">
+        </video>
+        {% if show_ad %}
+        <div id="ad-overlay" class="absolute inset-0 bg-black bg-opacity-75 flex items-center justify-center text-white text-2xl font-bold hidden fade-in-up">
+            <div class="text-center">
+                <p>¡Anuncio! Mejora el plan a Pro y desaparecen los anuncios.</p>
+                <a href="{{ url_for('plans') }}" class="btn-primary mt-4">Ver Planes</a>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+    <p class="mb-4 text-gray-600">{{ video.description }}</p>
+    <div class="flex items-center space-x-4 mb-6">
+        <button id="like-btn" class="btn-primary" onclick="handleAction('like')"><i class="fas fa-thumbs-up mr-2"></i>Like (<span id="likes-count">{{ video.likes }}</span>)</button>
+        <button id="dislike-btn" class="btn-primary" onclick="handleAction('dislike')"><i class="fas fa-thumbs-down mr-2"></i>Dislike (<span id="dislikes-count">{{ video.dislikes }}</span>)</button>
+    </div>
+    <div class="mb-6">
+        <h3 class="text-xl font-bold mb-2"><i class="fas fa-tv mr-2"></i>Canal: {{ channel.name }}</h3>
+        <p class="text-gray-600">{{ channel.description }}</p>
+        <button id="follow-btn" class="btn-primary" onclick="handleAction('follow_channel')" data-following="{{ 'true' if is_following else 'false' }}">
+            <i class="fas fa-{{ 'minus' if is_following else 'plus' }} mr-2"></i>{{ 'Dejar de Seguir' if is_following else 'Seguir Canal' }}
+        </button>
+        <span id="followers-count">Seguidores: {{ format_followers(channel.followers) }}</span>
+    </div>
+    {% if user and video.uploader_id == user.id %}
+    <button class="btn-primary mb-6" onclick="handleAction('delete_video')"><i class="fas fa-trash mr-2"></i>Eliminar Video</button>
+    {% endif %}
+    <h3 class="text-2xl font-bold mb-4"><i class="fas fa-comments mr-2"></i>Comentarios</h3>
+    <form id="comment-form" class="mb-6">
+        <textarea name="comment" placeholder="Escribe un comentario..." required class="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-sky-300 transition duration-500 hover:scale-105"></textarea>
+        <button type="submit" class="btn-primary mt-2"><i class="fas fa-paper-plane mr-2"></i>Comentar</button>
+    </form>
+    <ul id="comments-list" class="space-y-4">
+        {% for comment in video.comments %}
+        <li class="p-4 bg-sky-50 rounded-lg hover-float">
+            <p>{{ comment.content }}</p>
+            <small class="text-gray-500">Por {{ comment.user.nickname }}</small>
+        </li>
+        {% endfor %}
+    </ul>
+</div>
+<script>
+    {% if show_ad %}
+    const video = document.getElementById('video-player');
+    const adOverlay = document.getElementById('ad-overlay');
+    video.addEventListener('timeupdate', () => {
+        if (video.currentTime > video.duration / 2 && !adOverlay.classList.contains('shown')) {
+            adOverlay.classList.remove('hidden');
+            adOverlay.classList.add('shown');
+        }
+    });
+    {% endif %}
+
+    function handleAction(action) {
+        const formData = new FormData();
+        formData.append('action', action);
+        if (action === 'comment') {
+            const comment = document.querySelector('textarea[name="comment"]').value;
+            if (!comment) return;
+            formData.append('comment', comment);
+        }
+
+        fetch(window.location.href, {
+            method: 'POST',
+            body: formData,
+            headers: {
+                'X-Requested-With': 'XMLHttpRequest'
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.error) {
+                alert(data.error);
+            } else {
+                if (data.likes !== undefined) document.getElementById('likes-count').textContent = data.likes;
+                if (data.dislikes !== undefined) document.getElementById('dislikes-count').textContent = data.dislikes;
+                if (data.followers !== undefined) document.getElementById('followers-count').textContent = 'Seguidores: ' + data.followers;
+                if (data.is_following !== undefined) {
+                    const followBtn = document.getElementById('follow-btn');
+                    followBtn.innerHTML = `<i class="fas fa-${data.is_following ? 'minus' : 'plus'} mr-2"></i>${data.is_following ? 'Dejar de Seguir' : 'Seguir Canal'}`;
+                    followBtn.setAttribute('data-following', data.is_following);
+                }
+                if (data.comment) {
+                    const commentsList = document.getElementById('comments-list');
+                    const newComment = document.createElement('li');
+                    newComment.className = 'p-4 bg-sky-50 rounded-lg hover-float';
+                    newComment.innerHTML = `<p>${data.comment.content}</p><small class="text-gray-500">Por ${data.comment.user_nickname}</small>`;
+                    commentsList.appendChild(newComment);
+                    document.querySelector('textarea[name="comment"]').value = '';
+                }
+                if (data.redirect) {
+                    window.location.href = data.redirect;
+                }
+                if (data.message) {
+                    // Mostrar mensaje temporal
+                    const msgDiv = document.createElement('div');
+                    msgDiv.className = 'fixed top-4 right-4 bg-green-500 text-white p-4 rounded-lg shadow-lg';
+                    msgDiv.textContent = data.message;
+                    document.body.appendChild(msgDiv);
+                    setTimeout(() => msgDiv.remove(), 3000);
+                }
+            }
+        })
+        .catch(error => console.error('Error:', error));
+    }
+
+    document.getElementById('comment-form').addEventListener('submit', function(e) {
+        e.preventDefault();
+        handleAction('comment');
+    });
+</script>
+{% endblock %}

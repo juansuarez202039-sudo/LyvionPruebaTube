@@ -1,0 +1,40 @@
+<!-- templates/channel.html - Página de canal decorada -->
+{% extends "base.html" %}
+{% block content %}
+<div class="card hover-float">
+    <h2 class="text-3xl font-bold mb-4 text-primary animate-bounce-in"><i class="fas fa-tv mr-2 icon-spin"></i>{{ channel.name }}</h2>
+    <p class="mb-4 text-gray-600">{{ channel.description }}</p>
+    <p class="mb-6 text-lg"><i class="fas fa-users mr-2"></i>Seguidores: {{ format_followers(channel.followers) }}</p>
+    {% if user and user.id != channel.owner_id %}
+        <form method="POST" class="mb-6">
+            {% if is_following %}
+                <button name="action" value="unfollow" class="btn-primary"><i class="fas fa-minus mr-2"></i>Dejar de Seguir</button>
+            {% else %}
+                <button name="action" value="follow" class="btn-primary"><i class="fas fa-plus mr-2"></i>Seguir</button>
+            {% endif %}
+        </form>
+    {% endif %}
+    <h3 class="text-2xl font-bold mb-4"><i class="fas fa-play-circle mr-2"></i>Videos</h3>
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        {% for video in channel.videos %}
+        <div class="card hover-float">
+            <a href="{{ url_for('video', video_id=video.id) }}">
+                <video class="video-player w-full h-32 object-cover" controls>
+                    <source src="{{ url_for('uploaded_file', filename=video.filename) }}" type="video/mp4">
+                </video>
+            </a>
+            <h4 class="text-lg font-semibold mt-2 text-primary">
+                {{ video.title }}
+            </h4>
+            <p class="text-gray-600">{{ video.description[:50] }}...</p>
+            {% if user and user.id == channel.owner_id %}
+            <form method="POST" class="mt-2">
+                <input type="hidden" name="video_id" value="{{ video.id }}">
+                <button name="action" value="delete_video" class="btn-primary"><i class="fas fa-trash mr-2"></i>Eliminar</button>
+            </form>
+            {% endif %}
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}
